@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Use pure white for the main app surface */
+  --background: #ffffff; 
+  /* Slate-50 for the outer body background (visible on desktop or during overscroll) */
+  --body-bg: #f8fafc;
+  --foreground: #0f172a; /* slate-900 */
+  --sab: env(safe-area-inset-bottom);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-body-bg: var(--body-bg);
+}
+
+/* Base Styles */
+html, body {
+  background-color: var(--body-bg);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  
+  overflow-x: hidden;
+  /* Prevents the "bounce" effect on mobile which can show white gaps */
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Main App Shell */
+main {
+  background-color: var(--background);
+}
+
+@utility pb-safe {
+  padding-bottom: calc(1.25rem + var(--sab));
+}
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Custom Thin Scrollbar - Light Only */
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
+}
