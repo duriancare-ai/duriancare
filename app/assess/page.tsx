@@ -643,7 +643,7 @@ export default function AssessPage() {
                   </div>
                   <div>
                     <h3 className="font-black text-sm uppercase tracking-wider text-white">DURIANCARE AI</h3>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Field Assistant Guide</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Field Assistant Guide </p>
                   </div>
                 </div>
                 <button
