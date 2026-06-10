@@ -344,7 +344,7 @@ export default function Home() {
               <Info className="text-white" size={28} />
             </div>
             <p className="text-[11px] text-slate-300 leading-relaxed font-medium">
-              Thorns texture is the primary indicator for <span className="text-emerald-400 font-bold">PUYAT</span> ripeness.
+              Thorns textures is the primary indicator for <span className="text-emerald-400 font-bold">PUYAT</span> ripeness.
             </p>
           </section>
         </div>
