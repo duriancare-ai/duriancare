@@ -33,8 +33,10 @@ export default function HistoryPage() {
   const [syncing, setSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState("");
   const [classificationFilter, setClassificationFilter] = useState("All");
-  const [sortBy, setSortBy] = useState("latest");
+  //const [sortBy, setSortBy] = useState("latest");
   const [showSortMenu, setShowSortMenu] = useState(false);
+  const [sortBy, setSortBy] = useState("date");
+const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const loadData = async () => {
     let cloudData = [];
@@ -249,25 +251,14 @@ const filteredHistory = history
     return matchesSearch && matchesClassification;
   })
   .sort((a, b) => {
-    switch (sortBy) {
-      case "highest":
-        return b.confidence - a.confidence;
-
-      case "lowest":
-        return a.confidence - b.confidence;
-
-      case "oldest":
-        return (
-          new Date(a.created_at).getTime() -
-          new Date(b.created_at).getTime()
-        );
-
-      default:
-        return (
-          new Date(b.created_at).getTime() -
-          new Date(a.created_at).getTime()
-        );
+    if (sortBy === "accuracy") {
+      return b.confidence - a.confidence;
     }
+
+    return (
+      new Date(b.created_at).getTime() -
+      new Date(a.created_at).getTime()
+    );
   });
 
   return (
@@ -324,22 +315,51 @@ const filteredHistory = history
   <div className="flex gap-2 overflow-x-auto scrollbar-hide">
 
     {/* Classification Filter */}
-    {Object.entries(classificationCounts).map(([label, count]) => (
-      <button
-        key={label}
-      onClick={() => {
-  setClassificationFilter(label);
-  setShowSortMenu(true);
-}}
-        className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black ${
-          classificationFilter === label
-            ? "bg-emerald-500 text-white"
-            : "bg-slate-100 text-slate-700 border border-slate-200"
-        }`}
-      >
-        {label} ({count})
-      </button>
-    ))}
+   {Object.entries(classificationCounts).map(([label, count]) => (
+  <div key={label} className="relative flex-shrink-0">
+
+    <button
+      onClick={() =>
+        setOpenDropdown(openDropdown === label ? null : label)
+      }
+      className={`px-4 py-2 rounded-xl text-xs font-black ${
+        classificationFilter === label
+          ? "bg-emerald-500 text-white"
+          : "bg-slate-100 text-slate-700 border border-slate-200"
+      }`}
+    >
+      {label} ({count})
+    </button>
+
+    {openDropdown === label && (
+      <div className="absolute top-12 left-0 z-50 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden min-w-[150px]">
+
+        <button
+          onClick={() => {
+            setClassificationFilter(label);
+            setSortBy("date");
+            setOpenDropdown(null);
+          }}
+          className="block w-full text-left px-4 py-3 text-xs font-bold hover:bg-slate-50"
+        >
+          By Date Scan
+        </button>
+
+        <button
+          onClick={() => {
+            setClassificationFilter(label);
+            setSortBy("accuracy");
+            setOpenDropdown(null);
+          }}
+          className="block w-full text-left px-4 py-3 text-xs font-bold hover:bg-slate-50"
+        >
+          By Accuracy Rate
+        </button>
+
+      </div>
+    )}
+  </div>
+))}
 
     {/* Sort Dropdown */}
   
