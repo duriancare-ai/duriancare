@@ -33,11 +33,7 @@ export default function HistoryPage() {
   const [syncing, setSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState("");
   const [classificationFilter, setClassificationFilter] = useState("All");
-  //const [sortBy, setSortBy] = useState("latest");
-  const [showSortMenu, setShowSortMenu] = useState(false);
-  const [sortBy, setSortBy] = useState("date");
-  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
-const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState("latest");
 
   const loadData = async () => {
     let cloudData = [];
@@ -235,7 +231,7 @@ const classificationCounts = {
   Unripe: history.filter(item => item.result === "Unripe").length,
   "Not Durian": history.filter(item => item.result === "Not Durian").length,
 };
-const filteredHistory = history
+ const filteredHistory = history
   .filter((item) => {
     const searchLower = searchTerm.toLowerCase();
     const dateStr = new Date(item.created_at).toLocaleDateString();
@@ -245,21 +241,13 @@ const filteredHistory = history
       dateStr.toLowerCase().includes(searchLower) ||
       item.variety.toLowerCase().includes(searchLower);
 
-   const matchesClassification =
-  classificationFilter === "All" ||
-  item.result.toLowerCase().replace(/\s/g, "") ===
-  classificationFilter.toLowerCase().replace(/\s/g, "");
+    const matchesClassification =
+      classificationFilter === "All" ||
+      item.result === classificationFilter;
+
     return matchesSearch && matchesClassification;
   })
-  .sort((a, b) => {
-    let comparison = 0;
-    if (sortBy === "accuracy") {
-      comparison = b.confidence - a.confidence;
-    } else {
-      comparison = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    }
-    return sortOrder === "desc" ? comparison : -comparison;
-  });
+  .sort((a, b) => b.confidence - a.confidence);
 
   return (
     <div className="bg-white min-h-screen pb-32 select-none">
@@ -284,139 +272,50 @@ const filteredHistory = history
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{filteredHistory.length} Total Records</span>
             </div>
             
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => {
-                  setIsSelectionMode(!isSelectionMode);
-                  setSelectedIds([]);
-                }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
-                  isSelectionMode
-                    ? 'bg-slate-900 text-white'
-                    : 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
-                }`}
-              >
-                {isSelectionMode ? (
-                  <>
-                    <X size={14} /> Cancel
-                  </>
-                ) : (
-                  <>
-                    <ListChecks size={16} /> Delete
-                  </>
-                )}
-              </button>
-              
-              {/* SORT BUTTON */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowSortMenu(!showSortMenu)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white"
-                >
-                  Sort ▼
-                </button>
-                
-                <AnimatePresence>
-                  {showSortMenu && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-12 right-0 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[220px] py-1"
-                    >
-                      {[
-                        { id: 'date-desc', label: 'Date Scanned (Latest First)', by: 'date', order: 'desc' as const },
-                        { id: 'date-asc', label: 'Date Scanned (Oldest First)', by: 'date', order: 'asc' as const },
-                        { id: 'accuracy-desc', label: 'Accuracy Rate (Highest First)', by: 'accuracy', order: 'desc' as const },
-                        { id: 'accuracy-asc', label: 'Accuracy Rate (Lowest First)', by: 'accuracy', order: 'asc' as const },
-                      ].map((opt) => {
-                        const isActive = sortBy === opt.by && sortOrder === opt.order;
-                        return (
-                          <button 
-                            key={opt.id}
-                            onClick={() => { setSortBy(opt.by); setSortOrder(opt.order); setShowSortMenu(false); }}
-                            className={`w-full flex items-center justify-between px-4 py-3 text-left text-xs font-bold transition-colors ${isActive ? "bg-slate-50 text-emerald-600" : "text-slate-700 hover:bg-slate-50"}`}
-                          >
-                            {opt.label}
-                            {isActive && <Check size={14} />}
-                          </button>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
+         <button
+  onClick={() => {
+    setIsSelectionMode(!isSelectionMode);
+    setSelectedIds([]);
+  }}
+  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
+    isSelectionMode
+      ? 'bg-slate-900 text-white'
+      : 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
+  }`}
+>
+  {isSelectionMode ? (
+    <>
+      <X size={14} /> Cancel
+    </>
+  ) : (
+    <>
+      <ListChecks size={16} /> Delete
+    </>
+  )}
+</button>
           </div>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto pb-32">
-        
-       <div className="px-6 pb-3">
+        <div className="px-6 pb-3">
   <div className="flex gap-2 overflow-x-auto scrollbar-hide">
 
-    {/* Classification Filter */}
-  {Object.entries(classificationCounts).map(([label, count]) => (
-  <div key={label} className="relative flex-shrink-0">
-
-    <button
-      onClick={() =>
-        setOpenDropdown(
-          openDropdown === label ? null : label
-        )
-      }
-      className={`px-4 py-2 rounded-xl text-xs font-black ${
-        classificationFilter === label
-          ? "bg-emerald-500 text-white"
-          : "bg-slate-100 text-slate-700 border border-slate-200"
-      }`}
-    >
-      {label} ({count})
-    </button>
-
-    {openDropdown === label && (
-      <div className="absolute top-12 left-0 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
-
-        <button
-          onClick={() => {
-            setClassificationFilter(label);
-            setSortBy("date");
-            setOpenDropdown(null);
-          }}
-          className="block w-full px-4 py-3 text-left text-xs font-bold hover:bg-slate-50"
-        >
-          Date Scanned
-        </button>
-
-        <button
-          onClick={() => {
-            setClassificationFilter(label);
-            setSortBy("accuracy");
-            setOpenDropdown(null);
-          }}
-          className="block w-full px-4 py-3 text-left text-xs font-bold hover:bg-slate-50"
-        >
-          Accuracy Rate
-        </button>
-
-      </div>
-    )}
+    {Object.entries(classificationCounts).map(([label, count]) => (
+      <button
+        key={label}
+        onClick={() => setClassificationFilter(label)}
+        className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black transition-all ${
+          classificationFilter === label
+            ? "bg-emerald-500 text-white"
+            : "bg-slate-100 text-slate-700 border border-slate-200"
+        }`}
+      >
+        {label} ({count})
+      </button>
+    ))}
 
   </div>
-))}
-
-    {/* Sort Dropdown */}
-  
-      
-       
-
-     
-   
-
-  </div>
-
- 
 </div>
         {/* Sync Status Banner */}
         <AnimatePresence>
@@ -616,7 +515,7 @@ const filteredHistory = history
                       ? `Highly confident classification. The shell's visual patterns strongly aligned with typical ${selectedEntry.result.toLowerCase()} characteristics.`
                       : selectedEntry.confidence >= 70
                       ? `Consistent markers for ${selectedEntry.result.toLowerCase()} were detected, though minor visual noise or capture angle may have affected peak precision.`
-                      : "Mixed indicators were found. The AI detected overlapping features, suggesting a transitional state or suboptimal lighting during capture."
+                      : `Mixed indicators were found. The AI detected overlapping features, suggesting a transitional state or suboptimal lighting during capture.`
                     }
                   </p>
                 </div>
