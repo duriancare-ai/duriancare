@@ -232,7 +232,7 @@ const classificationCounts = {
   Unripe: history.filter(item => item.result === "Unripe").length,
   "Not Durian": history.filter(item => item.result === "Not Durian").length,
 };
- const filteredHistory = history
+const filteredHistory = history
   .filter((item) => {
     const searchLower = searchTerm.toLowerCase();
     const dateStr = new Date(item.created_at).toLocaleDateString();
@@ -248,7 +248,27 @@ const classificationCounts = {
 
     return matchesSearch && matchesClassification;
   })
-  .sort((a, b) => b.confidence - a.confidence);
+  .sort((a, b) => {
+    switch (sortBy) {
+      case "highest":
+        return b.confidence - a.confidence;
+
+      case "lowest":
+        return a.confidence - b.confidence;
+
+      case "oldest":
+        return (
+          new Date(a.created_at).getTime() -
+          new Date(b.created_at).getTime()
+        );
+
+      default:
+        return (
+          new Date(b.created_at).getTime() -
+          new Date(a.created_at).getTime()
+        );
+    }
+  });
 
   return (
     <div className="bg-white min-h-screen pb-32 select-none">
