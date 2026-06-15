@@ -284,7 +284,28 @@ const filteredHistory = history
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{filteredHistory.length} Total Records</span>
             </div>
             
-        {/* SORT BUTTON (ADDED ONLY) */}
+         <button
+  onClick={() => {
+    setIsSelectionMode(!isSelectionMode);
+    setSelectedIds([]);
+  }}
+  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
+    isSelectionMode
+      ? 'bg-slate-900 text-white'
+      : 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
+  }`}
+>
+  {isSelectionMode ? (
+    <>
+      <X size={14} /> Cancel
+    </>
+  ) : (
+    <>
+      <ListChecks size={16} /> Delete
+    </>
+  )}
+</button>
+{/* SORT BUTTON (ADDED ONLY) */}
 <div className="relative">
   <button
     onClick={() => setShowSortMenu(!showSortMenu)}
@@ -380,56 +401,10 @@ const filteredHistory = history
 
     {/* Sort Dropdown */}
   
-      <button
-        onClick={() => setShowSortMenu(!showSortMenu)}
-        className="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white"
-      >
-        Sort ▼
-      </button>
+      
+       
 
-      {showSortMenu && (
-        <div className="absolute top-12 right-0 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[180px]">
-          <button
-            onClick={() => {
-              setSortBy("latest");
-              setShowSortMenu(false);
-            }}
-            className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
-          >
-            Latest Scan
-          </button>
-
-          <button
-            onClick={() => {
-              setSortBy("oldest");
-              setShowSortMenu(false);
-            }}
-            className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
-          >
-            Oldest Scan
-          </button>
-
-          <button
-            onClick={() => {
-              setSortBy("highest");
-              setShowSortMenu(false);
-            }}
-            className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
-          >
-            Highest Accuracy
-          </button>
-
-          <button
-            onClick={() => {
-              setSortBy("lowest");
-              setShowSortMenu(false);
-            }}
-            className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
-          >
-            Lowest Accuracy
-          </button>
-        </div>
-      )}
+     
    
 
   </div>
