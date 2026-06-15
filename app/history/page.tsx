@@ -269,14 +269,27 @@ const classificationCounts = {
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{filteredHistory.length} Total Records</span>
             </div>
             
-            <button 
-              onClick={() => { setIsSelectionMode(!isSelectionMode); setSelectedIds([]); }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
-                isSelectionMode ? 'bg-slate-900 text-white' : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-              }`}
-            >
-              {isSelectionMode ? <><X size={14}/> Cancel</> : <><ListChecks size={16}/> Edit</>}
-            </button>
+         <button
+  onClick={() => {
+    setIsSelectionMode(!isSelectionMode);
+    setSelectedIds([]);
+  }}
+  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
+    isSelectionMode
+      ? 'bg-slate-900 text-white'
+      : 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
+  }`}
+>
+  {isSelectionMode ? (
+    <>
+      <X size={14} /> Cancel
+    </>
+  ) : (
+    <>
+      <ListChecks size={16} /> Delete
+    </>
+  )}
+</button>
           </div>
         </div>
       </div>
