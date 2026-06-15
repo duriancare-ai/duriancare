@@ -36,6 +36,7 @@ export default function HistoryPage() {
   //const [sortBy, setSortBy] = useState("latest");
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [sortBy, setSortBy] = useState("date");
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const loadData = async () => {
@@ -251,14 +252,13 @@ const filteredHistory = history
     return matchesSearch && matchesClassification;
   })
   .sort((a, b) => {
+    let comparison = 0;
     if (sortBy === "accuracy") {
-      return b.confidence - a.confidence;
+      comparison = b.confidence - a.confidence;
+    } else {
+      comparison = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     }
-
-    return (
-      new Date(b.created_at).getTime() -
-      new Date(a.created_at).getTime()
-    );
+    return sortOrder === "desc" ? comparison : -comparison;
   });
 
   return (
@@ -284,62 +284,69 @@ const filteredHistory = history
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{filteredHistory.length} Total Records</span>
             </div>
             
-         <button
-  onClick={() => {
-    setIsSelectionMode(!isSelectionMode);
-    setSelectedIds([]);
-  }}
-  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
-    isSelectionMode
-      ? 'bg-slate-900 text-white'
-      : 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
-  }`}
->
-  {isSelectionMode ? (
-    <>
-      <X size={14} /> Cancel
-    </>
-  ) : (
-    <>
-      <ListChecks size={16} /> Delete
-    </>
-  )}
-</button>
-{/* SORT BUTTON (ADDED ONLY) */}
-<div className="relative">
-  <button
-    onClick={() => setShowSortMenu(!showSortMenu)}
-    className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white"
-  >
-    Sort ▼
-  </button>
-
-  {showSortMenu && (
-    <div className="absolute top-12 right-0 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[180px]">
-      
-      <button
-        onClick={() => {
-          setSortBy("date");
-          setShowSortMenu(false);
-        }}
-        className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
-      >
-        Date Scanned
-      </button>
-
-      <button
-        onClick={() => {
-          setSortBy("accuracy");
-          setShowSortMenu(false);
-        }}
-        className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
-      >
-        Accuracy Rate
-      </button>
-
-    </div>
-  )}
-</div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setIsSelectionMode(!isSelectionMode);
+                  setSelectedIds([]);
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${
+                  isSelectionMode
+                    ? 'bg-slate-900 text-white'
+                    : 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
+                }`}
+              >
+                {isSelectionMode ? (
+                  <>
+                    <X size={14} /> Cancel
+                  </>
+                ) : (
+                  <>
+                    <ListChecks size={16} /> Delete
+                  </>
+                )}
+              </button>
+              
+              {/* SORT BUTTON */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowSortMenu(!showSortMenu)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white"
+                >
+                  Sort ▼
+                </button>
+                
+                <AnimatePresence>
+                  {showSortMenu && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-12 right-0 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[220px] py-1"
+                    >
+                      {[
+                        { id: 'date-desc', label: 'Date Scanned (Latest First)', by: 'date', order: 'desc' as const },
+                        { id: 'date-asc', label: 'Date Scanned (Oldest First)', by: 'date', order: 'asc' as const },
+                        { id: 'accuracy-desc', label: 'Accuracy Rate (Highest First)', by: 'accuracy', order: 'desc' as const },
+                        { id: 'accuracy-asc', label: 'Accuracy Rate (Lowest First)', by: 'accuracy', order: 'asc' as const },
+                      ].map((opt) => {
+                        const isActive = sortBy === opt.by && sortOrder === opt.order;
+                        return (
+                          <button 
+                            key={opt.id}
+                            onClick={() => { setSortBy(opt.by); setSortOrder(opt.order); setShowSortMenu(false); }}
+                            className={`w-full flex items-center justify-between px-4 py-3 text-left text-xs font-bold transition-colors ${isActive ? "bg-slate-50 text-emerald-600" : "text-slate-700 hover:bg-slate-50"}`}
+                          >
+                            {opt.label}
+                            {isActive && <Check size={14} />}
+                          </button>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -609,7 +616,7 @@ const filteredHistory = history
                       ? `Highly confident classification. The shell's visual patterns strongly aligned with typical ${selectedEntry.result.toLowerCase()} characteristics.`
                       : selectedEntry.confidence >= 70
                       ? `Consistent markers for ${selectedEntry.result.toLowerCase()} were detected, though minor visual noise or capture angle may have affected peak precision.`
-                      : `Mixed indicators were found. The AI detected overlapping features, suggesting a transitional state or suboptimal lighting during capture.`
+                      : "Mixed indicators were found. The AI detected overlapping features, suggesting a transitional state or suboptimal lighting during capture."
                     }
                   </p>
                 </div>
