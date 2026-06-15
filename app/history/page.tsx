@@ -327,7 +327,10 @@ const filteredHistory = history
     {Object.entries(classificationCounts).map(([label, count]) => (
       <button
         key={label}
-        onClick={() => setClassificationFilter(label)}
+      onClick={() => {
+  setClassificationFilter(label);
+  setShowSortMenu(true);
+}}
         className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black ${
           classificationFilter === label
             ? "bg-emerald-500 text-white"
@@ -394,21 +397,7 @@ const filteredHistory = history
 
   </div>
 
-  <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-    {Object.entries(classificationCounts).map(([label, count]) => (
-      <button
-        key={label}
-        onClick={() => setClassificationFilter(label)}
-        className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black transition-all ${
-          classificationFilter === label
-            ? "bg-emerald-500 text-white"
-            : "bg-slate-100 text-slate-700 border border-slate-200"
-        }`}
-      >
-        {label} ({count})
-      </button>
-    ))}
-  </div>
+ 
 </div>
         {/* Sync Status Banner */}
         <AnimatePresence>
