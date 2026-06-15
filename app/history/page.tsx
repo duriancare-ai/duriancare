@@ -34,6 +34,7 @@ export default function HistoryPage() {
   const [syncStatus, setSyncStatus] = useState("");
   const [classificationFilter, setClassificationFilter] = useState("All");
   const [sortBy, setSortBy] = useState("latest");
+  const [showSortMenu, setShowSortMenu] = useState(false);
 
   const loadData = async () => {
     let cloudData = [];
@@ -299,7 +300,80 @@ const classificationCounts = {
 
       <div className="flex-1 overflow-y-auto pb-32">
         
-        <div className="px-6 pb-3">
+       <div className="px-6 pb-3">
+  <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+
+    {/* Classification Filter */}
+    {Object.entries(classificationCounts).map(([label, count]) => (
+      <button
+        key={label}
+        onClick={() => setClassificationFilter(label)}
+        className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black ${
+          classificationFilter === label
+            ? "bg-emerald-500 text-white"
+            : "bg-slate-100 text-slate-700 border border-slate-200"
+        }`}
+      >
+        {label} ({count})
+      </button>
+    ))}
+
+    {/* Sort Dropdown */}
+    <div className="relative">
+      <button
+        onClick={() => setShowSortMenu(!showSortMenu)}
+        className="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white"
+      >
+        Sort ▼
+      </button>
+
+      {showSortMenu && (
+        <div className="absolute top-12 right-0 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50 min-w-[180px]">
+          <button
+            onClick={() => {
+              setSortBy("latest");
+              setShowSortMenu(false);
+            }}
+            className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
+          >
+            Latest Scan
+          </button>
+
+          <button
+            onClick={() => {
+              setSortBy("oldest");
+              setShowSortMenu(false);
+            }}
+            className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
+          >
+            Oldest Scan
+          </button>
+
+          <button
+            onClick={() => {
+              setSortBy("highest");
+              setShowSortMenu(false);
+            }}
+            className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
+          >
+            Highest Accuracy
+          </button>
+
+          <button
+            onClick={() => {
+              setSortBy("lowest");
+              setShowSortMenu(false);
+            }}
+            className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50"
+          >
+            Lowest Accuracy
+          </button>
+        </div>
+      )}
+    </div>
+
+  </div>
+
   <div className="flex gap-2 overflow-x-auto scrollbar-hide">
     {Object.entries(classificationCounts).map(([label, count]) => (
       <button
