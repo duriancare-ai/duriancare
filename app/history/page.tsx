@@ -339,7 +339,7 @@ const filteredHistory = history
     ))}
 
     {/* Sort Dropdown */}
-    <div className="relative">
+  
       <button
         onClick={() => setShowSortMenu(!showSortMenu)}
         className="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black bg-slate-900 text-white"
@@ -390,7 +390,7 @@ const filteredHistory = history
           </button>
         </div>
       )}
-    </div>
+   
 
   </div>
 
