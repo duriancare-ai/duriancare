@@ -244,10 +244,10 @@ const filteredHistory = history
       dateStr.toLowerCase().includes(searchLower) ||
       item.variety.toLowerCase().includes(searchLower);
 
-    const matchesClassification =
-      classificationFilter === "All" ||
-      item.result === classificationFilter;
-
+   const matchesClassification =
+  classificationFilter === "All" ||
+  item.result.toLowerCase().replace(/\s/g, "") ===
+  classificationFilter.toLowerCase().replace(/\s/g, "");
     return matchesSearch && matchesClassification;
   })
   .sort((a, b) => {
