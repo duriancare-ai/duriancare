@@ -230,21 +230,23 @@ const classificationCounts = {
   Unripe: history.filter(item => item.result === "Unripe").length,
   "Not Durian": history.filter(item => item.result === "Not Durian").length,
 };
- const filteredHistory = history.filter((item) => {
-  const searchLower = searchTerm.toLowerCase();
-  const dateStr = new Date(item.created_at).toLocaleDateString();
+ const filteredHistory = history
+  .filter((item) => {
+    const searchLower = searchTerm.toLowerCase();
+    const dateStr = new Date(item.created_at).toLocaleDateString();
 
-  const matchesSearch =
-    item.result.toLowerCase().includes(searchLower) ||
-    dateStr.toLowerCase().includes(searchLower) ||
-    item.variety.toLowerCase().includes(searchLower);
+    const matchesSearch =
+      item.result.toLowerCase().includes(searchLower) ||
+      dateStr.toLowerCase().includes(searchLower) ||
+      item.variety.toLowerCase().includes(searchLower);
 
-  const matchesClassification =
-    classificationFilter === "All" ||
-    item.result === classificationFilter;
+    const matchesClassification =
+      classificationFilter === "All" ||
+      item.result === classificationFilter;
 
-  return matchesSearch && matchesClassification;
-});
+    return matchesSearch && matchesClassification;
+  })
+  .sort((a, b) => b.confidence - a.confidence);
 
   return (
     <div className="bg-white min-h-screen pb-32 select-none">
