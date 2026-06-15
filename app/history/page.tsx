@@ -32,6 +32,7 @@ export default function HistoryPage() {
   const [selectedIds, setSelectedIds] = useState<(number | string)[]>([]);
   const [syncing, setSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState("");
+  const [classificationFilter, setClassificationFilter] = useState("All");
 
   const loadData = async () => {
     let cloudData = [];
@@ -222,16 +223,28 @@ export default function HistoryPage() {
       default: return "bg-slate-50 text-slate-700 border-slate-200";
     }
   };
+const classificationCounts = {
+  All: history.length,
+  Ripe: history.filter(item => item.result === "Ripe").length,
+  "Semi Ripe": history.filter(item => item.result === "Semi Ripe").length,
+  Unripe: history.filter(item => item.result === "Unripe").length,
+  "Not Durian": history.filter(item => item.result === "Not Durian").length,
+};
+ const filteredHistory = history.filter((item) => {
+  const searchLower = searchTerm.toLowerCase();
+  const dateStr = new Date(item.created_at).toLocaleDateString();
 
-  const filteredHistory = history.filter((item) => {
-    const searchLower = searchTerm.toLowerCase();
-    const dateStr = new Date(item.created_at).toLocaleDateString();
-    return (
-      item.result.toLowerCase().includes(searchLower) ||
-      dateStr.toLowerCase().includes(searchLower) ||
-      item.variety.toLowerCase().includes(searchLower)
-    );
-  });
+  const matchesSearch =
+    item.result.toLowerCase().includes(searchLower) ||
+    dateStr.toLowerCase().includes(searchLower) ||
+    item.variety.toLowerCase().includes(searchLower);
+
+  const matchesClassification =
+    classificationFilter === "All" ||
+    item.result === classificationFilter;
+
+  return matchesSearch && matchesClassification;
+});
 
   return (
     <div className="bg-white min-h-screen pb-32 select-none">
@@ -269,6 +282,25 @@ export default function HistoryPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto pb-32">
+        <div className="px-6 pb-3">
+  <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+
+    {Object.entries(classificationCounts).map(([label, count]) => (
+      <button
+        key={label}
+        onClick={() => setClassificationFilter(label)}
+        className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-black transition-all ${
+          classificationFilter === label
+            ? "bg-emerald-500 text-white"
+            : "bg-slate-100 text-slate-700 border border-slate-200"
+        }`}
+      >
+        {label} ({count})
+      </button>
+    ))}
+
+  </div>
+</div>
         {/* Sync Status Banner */}
         <AnimatePresence>
           {syncStatus && (
