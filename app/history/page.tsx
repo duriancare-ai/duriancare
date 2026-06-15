@@ -33,6 +33,7 @@ export default function HistoryPage() {
   const [syncing, setSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState("");
   const [classificationFilter, setClassificationFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("latest");
 
   const loadData = async () => {
     let cloudData = [];
@@ -297,9 +298,9 @@ const classificationCounts = {
       </div>
 
       <div className="flex-1 overflow-y-auto pb-32">
+        
         <div className="px-6 pb-3">
   <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-
     {Object.entries(classificationCounts).map(([label, count]) => (
       <button
         key={label}
@@ -313,7 +314,6 @@ const classificationCounts = {
         {label} ({count})
       </button>
     ))}
-
   </div>
 </div>
         {/* Sync Status Banner */}
