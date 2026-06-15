@@ -315,12 +315,14 @@ const filteredHistory = history
   <div className="flex gap-2 overflow-x-auto scrollbar-hide">
 
     {/* Classification Filter */}
-   {Object.entries(classificationCounts).map(([label, count]) => (
+  {Object.entries(classificationCounts).map(([label, count]) => (
   <div key={label} className="relative flex-shrink-0">
 
     <button
       onClick={() =>
-        setOpenDropdown(openDropdown === label ? null : label)
+        setOpenDropdown(
+          openDropdown === label ? null : label
+        )
       }
       className={`px-4 py-2 rounded-xl text-xs font-black ${
         classificationFilter === label
@@ -332,7 +334,7 @@ const filteredHistory = history
     </button>
 
     {openDropdown === label && (
-      <div className="absolute top-12 left-0 z-50 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden min-w-[150px]">
+      <div className="absolute top-12 left-0 bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
 
         <button
           onClick={() => {
@@ -340,9 +342,9 @@ const filteredHistory = history
             setSortBy("date");
             setOpenDropdown(null);
           }}
-          className="block w-full text-left px-4 py-3 text-xs font-bold hover:bg-slate-50"
+          className="block w-full px-4 py-3 text-left text-xs font-bold hover:bg-slate-50"
         >
-          By Date Scan
+          Date Scanned
         </button>
 
         <button
@@ -351,13 +353,14 @@ const filteredHistory = history
             setSortBy("accuracy");
             setOpenDropdown(null);
           }}
-          className="block w-full text-left px-4 py-3 text-xs font-bold hover:bg-slate-50"
+          className="block w-full px-4 py-3 text-left text-xs font-bold hover:bg-slate-50"
         >
-          By Accuracy Rate
+          Accuracy Rate
         </button>
 
       </div>
     )}
+
   </div>
 ))}
 
